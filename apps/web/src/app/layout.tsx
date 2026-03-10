@@ -15,10 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider
-      signInUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
-      signUpUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}
-      signInFallbackRedirectUrl="/"
-      signUpFallbackRedirectUrl="/"
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+      signInFallbackRedirectUrl="/dashboard"
+      signUpFallbackRedirectUrl="/dashboard"
       allowedRedirectOrigins={[
         "http://localhost:3000",
         "https://dailydigest.meshsuture.com",

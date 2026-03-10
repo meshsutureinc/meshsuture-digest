@@ -1,7 +1,16 @@
-import { redirect } from "next/navigation";
+import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
-  redirect(
-    process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || "/sign-in"
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900">
+      <SignIn
+        forceRedirectUrl="/dashboard"
+        appearance={{
+          elements: {
+            rootBox: "mx-auto",
+          },
+        }}
+      />
+    </div>
   );
 }

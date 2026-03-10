@@ -9,16 +9,32 @@ export async function GET(request: NextRequest) {
   const appUrl = config.app.url;
 
   if (!code || !state) {
+    console.error("[Slack OAuth] Missing code or state param", {
+      hasCode: !!code,
+      hasState: !!state,
+    });
     return NextResponse.redirect(
-      `${appUrl}/dashboard?error=slack_auth_failed`
+      `${appUrl}/dashboard?error=slack_missing_params`
     );
   }
 
+  let userId: string;
   try {
-    const { userId } = JSON.parse(
+    const decoded = JSON.parse(
       Buffer.from(state, "base64url").toString()
     );
+    userId = decoded.userId;
+    console.log("[Slack OAuth] Decoded state for user:", userId);
+  } catch (err) {
+    console.error("[Slack OAuth] Failed to decode state:", err);
+    return NextResponse.redirect(
+      `${appUrl}/dashboard?error=slack_invalid_state`
+    );
+  }
 
+  let tokenData: any;
+  try {
+    console.log("[Slack OAuth] Exchanging code for tokens...");
     const tokenResponse = await fetch(
       "https://slack.com/api/oauth.v2.access",
       {
@@ -33,30 +49,57 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const tokenData = (await tokenResponse.json()) as any;
+    tokenData = await tokenResponse.json();
+    console.log("[Slack OAuth] Token response ok:", tokenData.ok, "error:", tokenData.error);
 
     if (!tokenData.ok) {
-      throw new Error(`Slack OAuth error: ${tokenData.error}`);
+      throw new Error(`Slack API error: ${tokenData.error}`);
     }
+  } catch (err) {
+    console.error("[Slack OAuth] Token exchange failed:", err);
+    return NextResponse.redirect(
+      `${appUrl}/dashboard?error=slack_token_exchange_failed`
+    );
+  }
 
-    const botToken = tokenData.access_token;
-    const teamId = tokenData.team?.id || "";
-    const teamName = tokenData.team?.name || "";
-    const userAccessToken =
-      tokenData.authed_user?.access_token || botToken;
+  const botToken = tokenData.access_token;
+  const teamId = tokenData.team?.id || "";
+  const teamName = tokenData.team?.name || "";
+  const userAccessToken =
+    tokenData.authed_user?.access_token || botToken;
 
-    const encryptedBotToken = encrypt(botToken);
+  let encryptedBotToken: string;
+  let encryptedUserToken: string;
+  try {
+    console.log("[Slack OAuth] Encrypting tokens...");
+    encryptedBotToken = encrypt(botToken);
+    encryptedUserToken = encrypt(userAccessToken);
+    console.log("[Slack OAuth] Encryption successful");
+  } catch (err) {
+    console.error("[Slack OAuth] Encryption failed:", err);
+    return NextResponse.redirect(
+      `${appUrl}/dashboard?error=slack_encryption_failed`
+    );
+  }
 
+  let slackUserId: string | null = null;
+  try {
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    let slackUserId: string | null = null;
+    console.log("[Slack OAuth] Found user:", user?.email);
     if (user?.email) {
       slackUserId = await lookupSlackUserId(encryptedBotToken, user.email);
+      console.log("[Slack OAuth] Resolved Slack user ID:", slackUserId);
     }
+  } catch (err) {
+    console.error("[Slack OAuth] Slack user lookup failed (non-fatal):", err);
+  }
 
+  try {
+    console.log("[Slack OAuth] Upserting token to database...");
     await prisma.slackToken.upsert({
       where: { userId },
       update: {
-        encryptedAccessToken: encrypt(userAccessToken),
+        encryptedAccessToken: encryptedUserToken,
         encryptedBotToken: encryptedBotToken,
         teamId,
         teamName,
@@ -64,21 +107,22 @@ export async function GET(request: NextRequest) {
       },
       create: {
         userId,
-        encryptedAccessToken: encrypt(userAccessToken),
+        encryptedAccessToken: encryptedUserToken,
         encryptedBotToken: encryptedBotToken,
         teamId,
         teamName,
         slackUserId,
       },
     });
-
-    return NextResponse.redirect(
-      `${appUrl}/dashboard?connected=slack`
-    );
+    console.log("[Slack OAuth] Database upsert successful");
   } catch (err) {
-    console.error("Slack OAuth callback failed:", err);
+    console.error("[Slack OAuth] Database upsert failed:", err);
     return NextResponse.redirect(
-      `${appUrl}/dashboard?error=slack_auth_failed`
+      `${appUrl}/dashboard?error=slack_db_failed`
     );
   }
+
+  return NextResponse.redirect(
+    `${appUrl}/dashboard?connected=slack`
+  );
 }
