@@ -99,6 +99,9 @@ export default function SignInPage() {
         <p className="mb-6 text-center text-sm text-gray-500">
           MeshSuture Daily Digest
         </p>
+        <p className="mb-4 text-center text-xs text-gray-400">
+          Key: {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.slice(0, 8)}...
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
