@@ -2,14 +2,17 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
+const isSignInRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
-    await auth.protect();
+    const session = await auth();
+    if (!session.userId) {
+      return NextResponse.redirect(new URL("/sign-in", req.url));
+    }
   }
 
   const response = NextResponse.next();
-  // Remove any CSP headers that block Clerk's JS execution
   response.headers.delete("Content-Security-Policy");
   response.headers.delete("Content-Security-Policy-Report-Only");
   return response;
