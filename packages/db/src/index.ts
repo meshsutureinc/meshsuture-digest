@@ -15,5 +15,18 @@ export const prisma =
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-export * from "@prisma/client";
-export type { User, Digest, MicrosoftToken, SlackToken } from "@prisma/client";
+export { PrismaClient, Prisma } from "@prisma/client";
+
+// Model types (type-only, no runtime value)
+export type {
+  User,
+  Digest,
+  MicrosoftToken,
+  SlackToken,
+} from ".prisma/client";
+
+// Enum types + runtime values
+export {
+  NotificationPreference,
+  SummaryWindowPreset,
+} from ".prisma/client";
