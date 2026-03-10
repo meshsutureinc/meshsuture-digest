@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { config } from "@meshsuture/config";
-import { getAuthorizationUrl } from "@meshsuture/core/src/email-fetcher/index.js";
+import { getAuthorizationUrl } from "@meshsuture/core";
 import { authenticateFromQuery } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {

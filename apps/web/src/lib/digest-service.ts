@@ -1,18 +1,17 @@
 import { prisma } from "@meshsuture/db";
-import { decrypt, encrypt } from "@meshsuture/core";
 import {
+  decrypt,
+  encrypt,
   fetchEmails,
   sendEmailViaMSGraph,
   refreshAccessToken,
-} from "@meshsuture/core/src/email-fetcher/index.js";
-import {
   fetchSlackMessages,
   sendSlackDM,
-} from "@meshsuture/core/src/slack-fetcher/index.js";
-import { runAIPipeline } from "@meshsuture/core/src/ai-pipeline/index.js";
-import { renderEmailDigest } from "@meshsuture/core/src/digest-renderer/email.js";
-import { renderSlackDigest } from "@meshsuture/core/src/digest-renderer/slack.js";
-import { computeTimeRange } from "@meshsuture/core/src/time-range.js";
+  runAIPipeline,
+  renderEmailDigest,
+  renderSlackDigest,
+  computeTimeRange,
+} from "@meshsuture/core";
 import type { DigestResult, EmailMessage, SlackMessage } from "@meshsuture/core";
 
 export async function runDigestForUser(

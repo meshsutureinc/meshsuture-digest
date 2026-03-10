@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@meshsuture/db";
-import { encrypt } from "@meshsuture/core";
+import { encrypt, lookupSlackUserId } from "@meshsuture/core";
 import { config } from "@meshsuture/config";
-import { lookupSlackUserId } from "@meshsuture/core/src/slack-fetcher/index.js";
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
