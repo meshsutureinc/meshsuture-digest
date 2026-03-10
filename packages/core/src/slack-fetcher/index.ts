@@ -1,6 +1,6 @@
 import { WebClient } from "@slack/web-api";
-import { decrypt } from "../encryption/index.js";
-import type { SlackMessage, TimeRange } from "../types.js";
+import { decrypt } from "../encryption/index";
+import type { SlackMessage, TimeRange } from "../types";
 
 export function getSlackClient(encryptedBotToken: string): WebClient {
   const token = decrypt(encryptedBotToken);

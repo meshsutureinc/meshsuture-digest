@@ -4,7 +4,7 @@ import type {
   SlackMessage,
   Task,
   DigestResult,
-} from "../types.js";
+} from "../types";
 
 function getAnthropicClient(): Anthropic {
   return new Anthropic({

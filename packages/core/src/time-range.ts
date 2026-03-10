@@ -1,4 +1,4 @@
-import type { TimeRange } from "./types.js";
+import type { TimeRange } from "./types";
 import type { SummaryWindowPreset } from "@meshsuture/db";
 
 /**

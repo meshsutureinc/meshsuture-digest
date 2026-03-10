@@ -3,8 +3,8 @@ import {
   type Configuration,
 } from "@azure/msal-node";
 import { Client } from "@microsoft/microsoft-graph-client";
-import { decrypt } from "../encryption/index.js";
-import type { EmailMessage, TimeRange } from "../types.js";
+import { decrypt } from "../encryption/index";
+import type { EmailMessage, TimeRange } from "../types";
 
 const SCOPES = ["Mail.Read", "Mail.Send", "User.Read", "offline_access"];
 

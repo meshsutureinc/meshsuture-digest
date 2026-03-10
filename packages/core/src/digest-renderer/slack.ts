@@ -1,4 +1,4 @@
-import type { DigestResult, Task } from "../types.js";
+import type { DigestResult, Task } from "../types";
 
 const PRIORITY_COLORS: Record<string, string> = {
   P1: "#DC2626",
