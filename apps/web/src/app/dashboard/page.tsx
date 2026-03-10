@@ -186,7 +186,7 @@ export default function DashboardPage() {
           <h1 className="text-xl font-bold text-gray-900">
             MeshSuture Daily Digest
           </h1>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
       </header>
 

@@ -26,7 +26,7 @@ export default function Home() {
         </p>
 
         <SignedOut>
-          <SignInButton mode="redirect">
+          <SignInButton mode="redirect" forceRedirectUrl="/dashboard">
             <button className="rounded-lg bg-white px-8 py-3 text-lg font-semibold text-blue-900 shadow-lg transition hover:bg-blue-50 hover:shadow-xl">
               Sign in with @meshsuture.com
             </button>
