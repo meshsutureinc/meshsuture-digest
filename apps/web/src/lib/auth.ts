@@ -2,14 +2,31 @@ import { createClerkClient, verifyToken } from "@clerk/backend";
 import { prisma } from "@meshsuture/db";
 import { NextRequest, NextResponse } from "next/server";
 
-const secretKey = process.env.CLERK_SECRET_KEY!;
-
-const clerk = createClerkClient({ secretKey });
-
 export interface AuthenticatedUser {
   userId: string;
   clerkId: string;
   email: string;
+}
+
+function getSecretKey(): string {
+  const key = process.env.CLERK_SECRET_KEY;
+  if (!key) {
+    throw new Error("CLERK_SECRET_KEY is not set");
+  }
+  return key;
+}
+
+function getClerkClient() {
+  return createClerkClient({ secretKey: getSecretKey() });
+}
+
+function getAuthorizedParties(): string[] {
+  const parties = ["http://localhost:3000", "https://dailydigest.meshsuture.com"];
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (appUrl && !parties.includes(appUrl)) {
+    parties.push(appUrl);
+  }
+  return parties;
 }
 
 export async function authenticateRequest(
@@ -27,12 +44,17 @@ export async function authenticateRequest(
   const token = authHeader.slice(7);
 
   try {
-    const payload = await verifyToken(token, { secretKey });
+    const secretKey = getSecretKey();
+    const payload = await verifyToken(token, {
+      secretKey,
+      authorizedParties: getAuthorizedParties(),
+    });
 
     if (!payload.sub) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
+    const clerk = getClerkClient();
     const clerkUser = await clerk.users.getUser(payload.sub);
     const email = clerkUser.emailAddresses?.[0]?.emailAddress;
 
@@ -61,7 +83,8 @@ export async function authenticateRequest(
     });
 
     return { userId: user.id, clerkId: user.clerkId, email: user.email };
-  } catch {
+  } catch (err) {
+    console.error("[auth] Token verification failed:", err);
     return NextResponse.json(
       { error: "Invalid or expired token" },
       { status: 401 }
@@ -80,8 +103,9 @@ export async function authenticateFromQuery(
     return NextResponse.json({ error: "Missing token" }, { status: 401 });
   }
 
-  const fakeRequest = new NextRequest(request.url, {
+  // Build a new request with the token as a Bearer header
+  const authedRequest = new NextRequest(request.url, {
     headers: new Headers({ authorization: `Bearer ${token}` }),
   });
-  return authenticateRequest(fakeRequest);
+  return authenticateRequest(authedRequest);
 }
