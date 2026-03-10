@@ -32,20 +32,6 @@ function getAuthorizedParties(): string[] {
   return parties;
 }
 
-/**
- * Decode JWT payload without verification, for diagnostic logging only.
- */
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return null;
-    const payload = Buffer.from(parts[1], "base64url").toString("utf-8");
-    return JSON.parse(payload);
-  } catch {
-    return null;
-  }
-}
-
 export async function authenticateRequest(
   request: NextRequest
 ): Promise<AuthenticatedUser | NextResponse> {
@@ -63,82 +49,76 @@ export async function authenticateRequest(
   const secretKey = getSecretKey();
   const authorizedParties = getAuthorizedParties();
 
-  // Log diagnostics (redact sensitive values)
-  const claims = decodeJwtPayload(token);
-  console.log("[auth] Token diagnostics:", {
-    tokenLength: token.length,
-    tokenPrefix: token.slice(0, 20) + "...",
-    secretKeyPrefix: secretKey.slice(0, 7) + "...",
-    authorizedParties,
-    jwtClaims: claims
-      ? {
-          iss: claims.iss,
-          azp: claims.azp,
-          sub: claims.sub,
-          exp: claims.exp,
-          nbf: claims.nbf,
-          iat: claims.iat,
-        }
-      : "FAILED_TO_DECODE",
-  });
-
+  // Step 1: Verify the Clerk JWT
+  let payload;
   try {
-    const payload = await verifyToken(token, {
+    payload = await verifyToken(token, {
       secretKey,
       authorizedParties,
     });
     console.log("[auth] verifyToken succeeded, sub:", payload.sub);
+  } catch (err: any) {
+    console.error("[auth] Clerk token verification FAILED:", {
+      errorName: err?.name,
+      errorMessage: err?.message,
+      errorReason: err?.reason,
+    });
+    return NextResponse.json(
+      { error: "Invalid or expired token" },
+      { status: 401 }
+    );
+  }
 
-    if (!payload.sub) {
-      console.error("[auth] Token verified but no sub claim");
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-    }
+  if (!payload.sub) {
+    console.error("[auth] Token verified but no sub claim");
+    return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+  }
 
+  // Step 2: Fetch Clerk user profile
+  let email: string | undefined;
+  let userName: string | null = null;
+  try {
     const clerk = getClerkClient();
     const clerkUser = await clerk.users.getUser(payload.sub);
-    const email = clerkUser.emailAddresses?.[0]?.emailAddress;
+    email = clerkUser.emailAddresses?.[0]?.emailAddress;
+    userName =
+      `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() ||
+      null;
     console.log("[auth] Clerk user fetched, email:", email);
+  } catch (err: any) {
+    console.error("[auth] Clerk API getUser FAILED:", err?.message);
+    return NextResponse.json(
+      { error: "Failed to fetch user profile" },
+      { status: 502 }
+    );
+  }
 
-    if (!email?.endsWith("@meshsuture.com")) {
-      console.error("[auth] Email domain rejected:", email);
-      return NextResponse.json(
-        { error: "Only @meshsuture.com emails are allowed" },
-        { status: 403 }
-      );
-    }
+  if (!email?.endsWith("@meshsuture.com")) {
+    console.error("[auth] Email domain rejected:", email);
+    return NextResponse.json(
+      { error: "Only @meshsuture.com emails are allowed" },
+      { status: 403 }
+    );
+  }
 
+  // Step 3: Upsert user in database
+  try {
     const user = await prisma.user.upsert({
       where: { clerkId: payload.sub },
-      update: {
-        email,
-        name:
-          `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() ||
-          null,
-      },
-      create: {
-        clerkId: payload.sub,
-        email,
-        name:
-          `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() ||
-          null,
-      },
+      update: { email, name: userName },
+      create: { clerkId: payload.sub, email, name: userName },
     });
 
     console.log("[auth] User authenticated:", user.id);
     return { userId: user.id, clerkId: user.clerkId, email: user.email };
   } catch (err: any) {
-    console.error("[auth] Token verification FAILED:", {
-      errorName: err?.name,
+    console.error("[auth] Database error during user upsert:", {
       errorMessage: err?.message,
       errorCode: err?.code,
-      errorStatus: err?.status,
-      errorReason: err?.reason,
-      clerkErrors: err?.errors,
-      stack: err?.stack?.split("\n").slice(0, 5).join("\n"),
     });
     return NextResponse.json(
-      { error: "Invalid or expired token" },
-      { status: 401 }
+      { error: "Database connection failed" },
+      { status: 503 }
     );
   }
 }
