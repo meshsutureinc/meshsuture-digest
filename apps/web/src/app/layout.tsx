@@ -8,6 +8,9 @@ export const metadata: Metadata = {
     "AI-powered daily digest of your emails and Slack messages, prioritized by importance.",
 };
 
+const appUrl =
+  process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
 export default function RootLayout({
   children,
 }: {
@@ -23,9 +26,9 @@ export default function RootLayout({
         process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL ||
         "https://accounts.dailydigest.meshsuture.com/sign-up"
       }
-      signInFallbackRedirectUrl="/dashboard"
-      signUpFallbackRedirectUrl="/dashboard"
-      afterSignOutUrl="/"
+      signInFallbackRedirectUrl={`${appUrl}/dashboard`}
+      signUpFallbackRedirectUrl={`${appUrl}/dashboard`}
+      afterSignOutUrl={appUrl}
       allowedRedirectOrigins={[
         "http://localhost:3000",
         "https://dailydigest.meshsuture.com",
