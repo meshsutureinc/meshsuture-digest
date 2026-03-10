@@ -2,7 +2,6 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
-const isSignInRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
@@ -11,11 +10,8 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.redirect(new URL("/sign-in", req.url));
     }
   }
-
-  const response = NextResponse.next();
-  response.headers.delete("Content-Security-Policy");
-  response.headers.delete("Content-Security-Policy-Report-Only");
-  return response;
+  // Return nothing for all other routes — let clerkMiddleware handle
+  // session syncing, __clerk_synced callbacks, and cookie management
 });
 
 export const config = {
