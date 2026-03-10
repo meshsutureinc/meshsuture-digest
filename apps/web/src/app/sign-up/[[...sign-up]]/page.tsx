@@ -1,16 +1,9 @@
-import { SignUp } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+
+const signUpUrl =
+  process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL ||
+  "https://accounts.dailydigest.meshsuture.com/sign-up";
 
 export default function SignUpPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900">
-      <SignUp
-        forceRedirectUrl="/dashboard"
-        appearance={{
-          elements: {
-            rootBox: "mx-auto",
-          },
-        }}
-      />
-    </div>
-  );
+  redirect(signUpUrl);
 }

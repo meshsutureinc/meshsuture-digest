@@ -1,16 +1,9 @@
-import { SignIn } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+
+const signInUrl =
+  process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
+  "https://accounts.dailydigest.meshsuture.com/sign-in";
 
 export default function SignInPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900">
-      <SignIn
-        forceRedirectUrl="/dashboard"
-        appearance={{
-          elements: {
-            rootBox: "mx-auto",
-          },
-        }}
-      />
-    </div>
-  );
+  redirect(signInUrl);
 }
