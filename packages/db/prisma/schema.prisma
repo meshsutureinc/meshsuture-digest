@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NotificationPreference {
+  EMAIL_ONLY
+  SLACK_ONLY
+  BOTH
+}
+
+enum SummaryWindowPreset {
+  LAST_24_HOURS
+  LAST_12_HOURS
+  LAST_8_HOURS
+  SINCE_YESTERDAY_5PM
+  CUSTOM
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notificationPreference NotificationPreference @default(BOTH)
+
+  summaryWindowPreset SummaryWindowPreset @default(LAST_24_HOURS)
+  summaryStartTime    String?
+  summaryEndTime      String?
+
+  microsoftToken MicrosoftToken?
+  slackToken     SlackToken?
+  digests        Digest[]
+
+  @@index([clerkId])
+}
+
+model MicrosoftToken {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  encryptedAccessToken  String
+  encryptedRefreshToken String
+  expiresAt    DateTime
+  scopes       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SlackToken {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  encryptedAccessToken  String
+  encryptedBotToken     String
+  teamId                String
+  teamName              String
+  slackUserId           String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Digest {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date           String
+  summary        String
+  tasksJson      String
+  emailsAnalyzed Int      @default(0)
+  slackAnalyzed  Int      @default(0)
+  sentViaEmail   Boolean  @default(false)
+  sentViaSlack   Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  @@unique([userId, date])
+  @@index([userId])
+}

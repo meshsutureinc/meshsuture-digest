@@ -1,0 +1,29 @@
+{
+  "name": "meshsuture-digest",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "workers/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:web": "turbo dev --filter=@meshsuture/web",
+    "dev:api": "turbo dev --filter=@meshsuture/api",
+    "dev:worker": "turbo dev --filter=@meshsuture/digest-worker",
+    "db:migrate": "turbo db:migrate --filter=@meshsuture/db",
+    "db:generate": "turbo db:generate --filter=@meshsuture/db",
+    "db:push": "turbo db:push --filter=@meshsuture/db",
+    "db:studio": "turbo db:studio --filter=@meshsuture/db"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0"
+  },
+  "packageManager": "npm@10.8.0",
+  "engines": {
+    "node": ">=20"
+  }
+}
