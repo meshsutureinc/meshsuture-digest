@@ -23,8 +23,11 @@ npm run dev
 
 ## Project Structure
 
-- `apps/web` - Next.js 14 frontend (port 3000)
-- `apps/api` - Fastify API server (port 3001)
+- `apps/web` - Next.js 15 app with frontend + API routes (deployed on Vercel)
+  - `src/app/api/` - All API route handlers (auth, preferences, digest)
+  - `src/lib/auth.ts` - Clerk auth helper for API routes
+  - `src/lib/digest-service.ts` - Digest generation service
+- `apps/api` - Legacy Fastify API server (not deployed, kept for reference)
 - `packages/core` - Shared business logic (email fetcher, Slack fetcher, AI pipeline, renderers, encryption)
 - `packages/db` - Prisma schema and database client
 - `packages/config` - Shared configuration
@@ -33,8 +36,7 @@ npm run dev
 ## Key Commands
 
 ```bash
-npm run dev:web       # Frontend only
-npm run dev:api       # API only
+npm run dev:web       # Frontend + API routes
 npm run dev:worker    # Worker only
 npm run db:studio     # Open Prisma Studio
 npm run db:push       # Push schema changes without migration

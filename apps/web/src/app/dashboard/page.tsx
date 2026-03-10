@@ -66,7 +66,7 @@ export default function DashboardPage() {
 
     try {
       const [connRes, prefRes] = await Promise.all([
-        apiClient("/auth/status", token),
+        apiClient("/api/auth/status", token),
         apiClient("/api/preferences", token),
       ]);
 
@@ -158,13 +158,13 @@ export default function DashboardPage() {
   const handleConnectMicrosoft = async () => {
     const token = await getToken();
     if (!token) return;
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/auth/microsoft?token=${token}`;
+    window.location.href = `/api/auth/microsoft?token=${token}`;
   };
 
   const handleConnectSlack = async () => {
     const token = await getToken();
     if (!token) return;
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/auth/slack?token=${token}`;
+    window.location.href = `/api/auth/slack?token=${token}`;
   };
 
   if (loading) {
