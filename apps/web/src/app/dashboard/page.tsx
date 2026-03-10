@@ -44,7 +44,7 @@ interface DigestResult {
 }
 
 export default function DashboardPage() {
-  const { getToken } = useAuth();
+  const { getToken, isLoaded } = useAuth();
   const [connections, setConnections] = useState<ConnectionStatus | null>(null);
   const [preferences, setPreferences] = useState<Preferences | null>(null);
   const [digestResult, setDigestResult] = useState<DigestResult | null>(null);
@@ -62,7 +62,10 @@ export default function DashboardPage() {
 
   const fetchData = useCallback(async () => {
     const token = await getToken();
-    if (!token) return;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const [connRes, prefRes] = await Promise.all([
@@ -80,8 +83,8 @@ export default function DashboardPage() {
   }, [getToken]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (isLoaded) fetchData();
+  }, [isLoaded, fetchData]);
 
   // Check for OAuth callback params
   useEffect(() => {
