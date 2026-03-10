@@ -149,7 +149,7 @@ export default function DashboardPage() {
         showToast("Test digest generated!", "success");
       } else {
         const err = await res.json();
-        showToast(err.error || "Failed to generate digest", "error");
+        showToast(err.message || err.error || "Failed to generate digest", "error");
       }
     } catch {
       showToast("Failed to generate test digest", "error");
