@@ -23,25 +23,53 @@ export default function SignInPage() {
     if (!signInLoaded || !signIn) return;
 
     setError("");
-    setStatus("Signing in...");
+    setStatus("Step 1: Creating sign-in...");
 
     try {
-      const result = await signIn.create({
-        identifier: email,
-        password,
-      });
+      // Step 1: Create sign-in with identifier only
+      const si = await signIn.create({ identifier: email });
+      setStatus(`Step 1 done: ${si.status}`);
+      console.log("[SignIn] After create:", si.status, JSON.stringify(si, null, 2));
 
-      setStatus(`Status: ${result.status}`);
+      // Step 2: Attempt first factor with password
+      if (si.status === "needs_first_factor") {
+        setStatus("Step 2: Verifying password...");
+        const result = await si.attemptFirstFactor({
+          strategy: "password",
+          password,
+        });
+        setStatus(`Step 2 done: ${result.status}`);
+        console.log("[SignIn] After first factor:", result.status);
 
-      if (result.status === "complete") {
-        setStatus("Setting active session...");
-        await setActive({ session: result.createdSessionId });
-        setStatus("Redirecting to dashboard...");
-        window.location.href = "/dashboard";
-      } else {
-        setStatus(`Unexpected status: ${result.status}. Check console.`);
-        console.log("[SignIn] Full result:", JSON.stringify(result, null, 2));
+        if (result.status === "complete") {
+          setStatus("Step 3: Setting active session...");
+          await setActive({ session: result.createdSessionId });
+          setStatus("Done! Redirecting...");
+          window.location.href = "/dashboard";
+          return;
+        }
+
+        if (result.status === "needs_second_factor") {
+          setStatus("2FA required — not yet supported in this form.");
+          return;
+        }
+
+        setStatus(`Unexpected after password: ${result.status}. Check console.`);
+        console.log("[SignIn] Unexpected:", JSON.stringify(result, null, 2));
+        return;
       }
+
+      // If create already completed (e.g. single-step)
+      if (si.status === "complete") {
+        setStatus("Step 3: Setting active session...");
+        await setActive({ session: si.createdSessionId });
+        setStatus("Done! Redirecting...");
+        window.location.href = "/dashboard";
+        return;
+      }
+
+      setStatus(`Unexpected after create: ${si.status}. Check console.`);
+      console.log("[SignIn] Unexpected:", JSON.stringify(si, null, 2));
     } catch (err: any) {
       console.error("[SignIn] Error:", err);
       setError(
