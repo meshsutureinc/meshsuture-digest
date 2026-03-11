@@ -3,6 +3,17 @@
 import { useSignIn, useAuth } from "@clerk/nextjs";
 import { useState, useEffect, FormEvent } from "react";
 
+function MsiLogo() {
+  return (
+    <div className="mb-8 flex items-baseline justify-center gap-0.5">
+      <span className="text-3xl font-semibold tracking-tight text-msi-navy">
+        MeshSuture
+      </span>
+      <span className="text-3xl font-semibold text-msi-cyan">.</span>
+    </div>
+  );
+}
+
 export default function SignInPage() {
   const { signIn, setActive, isLoaded: signInLoaded } = useSignIn();
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
@@ -25,7 +36,6 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
-      // Step 1: Verify password server-side and get a sign-in token
       const res = await fetch("/api/auth/sign-in", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,7 +50,6 @@ export default function SignInPage() {
         return;
       }
 
-      // Step 2: Use the token to create a client-side session (bypasses captcha)
       const result = await signIn.create({
         strategy: "ticket",
         ticket: data.token,
@@ -62,25 +71,30 @@ export default function SignInPage() {
 
   if (!signInLoaded) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-white border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-msi-pale-cyan to-white">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-msi-navy border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
-        <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
-          Sign in
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-msi-pale-cyan to-white">
+      <div className="w-full max-w-md rounded-2xl border border-msi-light-blue bg-white p-10 shadow-lg">
+        <MsiLogo />
+
+        <h1 className="mb-1 text-center text-xl font-semibold text-msi-navy">
+          Sign in to Daily Digest
         </h1>
-        <p className="mb-6 text-center text-sm text-gray-500">
-          MeshSuture Daily Digest
+        <p className="mb-8 text-center text-sm text-msi-gray">
+          Your AI-powered morning briefing
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="mb-1.5 block text-sm font-medium text-msi-dark"
+            >
               Email address
             </label>
             <input
@@ -90,12 +104,15 @@ export default function SignInPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@meshsuture.com"
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-xl border border-msi-light-blue bg-white px-4 py-2.5 text-msi-dark shadow-sm placeholder:text-msi-gray/60 focus:border-msi-cyan focus:outline-none focus:ring-2 focus:ring-msi-cyan/20"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="mb-1.5 block text-sm font-medium text-msi-dark"
+            >
               Password
             </label>
             <input
@@ -104,12 +121,12 @@ export default function SignInPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-xl border border-msi-light-blue bg-white px-4 py-2.5 text-msi-dark shadow-sm focus:border-msi-cyan focus:outline-none focus:ring-2 focus:ring-msi-cyan/20"
             />
           </div>
 
           {error && (
-            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            <div className="rounded-xl bg-red-50 p-3 text-sm text-red-700">
               {error}
             </div>
           )}
@@ -117,13 +134,13 @@ export default function SignInPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700 disabled:opacity-50"
+            className="w-full rounded-brand bg-msi-cyan px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-msi-navy focus:outline-none focus:ring-2 focus:ring-msi-cyan/40 focus:ring-offset-2 disabled:opacity-50"
           >
             {loading ? "Signing in..." : "Continue"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-xs text-gray-400">
+        <p className="mt-6 text-center text-xs text-msi-gray">
           Only @meshsuture.com email addresses are allowed.
         </p>
       </div>

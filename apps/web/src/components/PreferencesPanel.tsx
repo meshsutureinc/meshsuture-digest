@@ -74,10 +74,10 @@ export function PreferencesPanel({ preferences, onSave }: Props) {
   };
 
   return (
-    <div className="space-y-6 rounded-xl border bg-white p-6 shadow-sm">
+    <div className="space-y-6 rounded-2xl border border-msi-light-blue bg-white p-6 shadow-sm">
       {/* Notification Preference */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">
+        <label className="mb-2 block text-sm font-semibold text-msi-navy">
           Notification delivery
         </label>
         <div className="flex gap-3">
@@ -88,12 +88,12 @@ export function PreferencesPanel({ preferences, onSave }: Props) {
                 key={opt.value}
                 onClick={() => !disabled && setNotifPref(opt.value)}
                 disabled={disabled}
-                className={`rounded-lg border px-4 py-2 text-sm font-medium transition ${
+                className={`rounded-brand border-2 px-4 py-2 text-sm font-medium transition ${
                   notifPref === opt.value
-                    ? "border-blue-600 bg-blue-50 text-blue-700"
+                    ? "border-msi-cyan bg-msi-pale-cyan text-msi-navy"
                     : disabled
-                      ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
-                      : "border-gray-300 text-gray-600 hover:border-gray-400"
+                      ? "cursor-not-allowed border-msi-light-blue bg-msi-off-white text-msi-gray/50"
+                      : "border-msi-light-blue text-msi-dark hover:border-msi-cyan"
                 }`}
               >
                 {opt.label}
@@ -102,12 +102,12 @@ export function PreferencesPanel({ preferences, onSave }: Props) {
           })}
         </div>
         {!preferences.hasMicrosoft && (
-          <p className="mt-1 text-xs text-gray-400">
+          <p className="mt-1 text-xs text-msi-gray">
             Connect Microsoft 365 to enable email delivery.
           </p>
         )}
         {!preferences.hasSlack && (
-          <p className="mt-1 text-xs text-gray-400">
+          <p className="mt-1 text-xs text-msi-gray">
             Connect Slack to enable Slack delivery.
           </p>
         )}
@@ -115,13 +115,13 @@ export function PreferencesPanel({ preferences, onSave }: Props) {
 
       {/* Summary Window */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">
+        <label className="mb-2 block text-sm font-semibold text-msi-navy">
           Summary window
         </label>
         <select
           value={summaryPreset}
           onChange={(e) => setSummaryPreset(e.target.value as SummaryPreset)}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="rounded-xl border border-msi-light-blue px-3 py-2 text-sm text-msi-dark focus:border-msi-cyan focus:outline-none focus:ring-2 focus:ring-msi-cyan/20"
         >
           {SUMMARY_PRESETS.map((p) => (
             <option key={p.value} value={p.value}>
@@ -133,25 +133,25 @@ export function PreferencesPanel({ preferences, onSave }: Props) {
         {summaryPreset === "CUSTOM" && (
           <div className="mt-3 flex gap-4">
             <div>
-              <label className="mb-1 block text-xs text-gray-500">
+              <label className="mb-1 block text-xs text-msi-gray">
                 Start (Central Time)
               </label>
               <input
                 type="datetime-local"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                className="rounded-xl border border-msi-light-blue px-3 py-1.5 text-sm text-msi-dark focus:border-msi-cyan focus:outline-none focus:ring-2 focus:ring-msi-cyan/20"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-gray-500">
+              <label className="mb-1 block text-xs text-msi-gray">
                 End (Central Time)
               </label>
               <input
                 type="datetime-local"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                className="rounded-xl border border-msi-light-blue px-3 py-1.5 text-sm text-msi-dark focus:border-msi-cyan focus:outline-none focus:ring-2 focus:ring-msi-cyan/20"
               />
             </div>
           </div>
@@ -161,7 +161,7 @@ export function PreferencesPanel({ preferences, onSave }: Props) {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white shadow transition hover:bg-blue-700 disabled:opacity-50"
+        className="rounded-brand bg-msi-cyan px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-msi-navy focus:outline-none focus:ring-2 focus:ring-msi-cyan/40 focus:ring-offset-2 disabled:opacity-50"
       >
         {saving ? "Saving..." : "Save preferences"}
       </button>

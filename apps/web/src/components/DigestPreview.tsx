@@ -25,8 +25,8 @@ const PRIORITY_CONFIG = {
     label: "IMPORTANT",
     border: "border-l-orange-400",
   },
-  P3: { color: "bg-blue-500", label: "ROUTINE", border: "border-l-blue-400" },
-  P4: { color: "bg-gray-400", label: "LOW", border: "border-l-gray-300" },
+  P3: { color: "bg-msi-cyan", label: "ROUTINE", border: "border-l-msi-cyan" },
+  P4: { color: "bg-msi-gray", label: "LOW", border: "border-l-msi-gray" },
 };
 
 const PRIORITY_TITLES: Record<string, string> = {
@@ -41,17 +41,17 @@ function TaskCard({ task }: { task: Task }) {
 
   return (
     <div
-      className={`rounded-lg border-l-4 bg-white p-4 shadow-sm ${config.border}`}
+      className={`rounded-xl border-l-4 bg-white p-4 shadow-sm ${config.border}`}
     >
       <div className="flex items-start gap-3">
         <span
-          className={`mt-0.5 rounded px-2 py-0.5 text-[10px] font-bold tracking-wide text-white ${config.color}`}
+          className={`mt-0.5 rounded-md px-2 py-0.5 text-[10px] font-bold tracking-wide text-white ${config.color}`}
         >
           {task.priority}
         </span>
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-900">{task.title}</p>
-          <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+          <p className="text-sm font-medium text-msi-dark">{task.title}</p>
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-msi-gray">
             <span>
               {task.source === "email" ? "Email" : "Slack"} from{" "}
               {task.senderName}
@@ -60,7 +60,7 @@ function TaskCard({ task }: { task: Task }) {
               <span className="text-red-600">Due: {task.deadline}</span>
             )}
           </div>
-          <p className="mt-1 text-xs italic text-gray-400">{task.reason}</p>
+          <p className="mt-1 text-xs italic text-msi-gray">{task.reason}</p>
         </div>
       </div>
     </div>
@@ -84,21 +84,21 @@ export function DigestPreview({ digest }: { digest: DigestResult }) {
       {/* Delivery status */}
       <div className="flex gap-3">
         {digest.sentViaEmail && (
-          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+          <span className="rounded-full bg-msi-pale-cyan px-3 py-1 text-xs font-medium text-msi-navy">
             Sent via Email
           </span>
         )}
         {digest.sentViaSlack && (
-          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+          <span className="rounded-full bg-msi-pale-cyan px-3 py-1 text-xs font-medium text-msi-navy">
             Sent via Slack
           </span>
         )}
       </div>
 
       {/* Summary */}
-      <div className="rounded-lg border-l-4 border-l-blue-500 bg-blue-50 p-4">
-        <p className="text-sm font-medium text-blue-800">Daily Overview</p>
-        <p className="mt-1 text-sm text-blue-700">{digest.dailySummary}</p>
+      <div className="rounded-xl border-l-4 border-l-msi-cyan bg-msi-pale-cyan p-4">
+        <p className="text-sm font-semibold text-msi-navy">Daily Overview</p>
+        <p className="mt-1 text-sm text-msi-dark">{digest.dailySummary}</p>
       </div>
 
       {/* Tasks by priority */}
@@ -108,7 +108,7 @@ export function DigestPreview({ digest }: { digest: DigestResult }) {
 
         return (
           <div key={priority}>
-            <h3 className="mb-2 text-sm font-semibold text-gray-700">
+            <h3 className="mb-2 text-sm font-semibold text-msi-navy">
               {priority}: {PRIORITY_TITLES[priority]} ({tasks.length})
             </h3>
             <div className="space-y-2">
@@ -121,13 +121,13 @@ export function DigestPreview({ digest }: { digest: DigestResult }) {
       })}
 
       {digest.tasks.length === 0 && (
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-sm text-msi-gray">
           No actionable tasks found. You're all clear!
         </p>
       )}
 
       {/* Stats */}
-      <div className="text-center text-xs text-gray-400">
+      <div className="text-center text-xs text-msi-gray">
         Analyzed {digest.emailsAnalyzed} email
         {digest.emailsAnalyzed !== 1 ? "s" : ""} and{" "}
         {digest.slackMessagesAnalyzed} Slack message

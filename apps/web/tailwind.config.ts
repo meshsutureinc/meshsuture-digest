@@ -5,15 +5,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: "#EFF6FF",
-          100: "#DBEAFE",
-          500: "#3B82F6",
-          600: "#2563EB",
-          700: "#1D4ED8",
-          800: "#1E40AF",
-          900: "#1E3A8A",
+        msi: {
+          navy: "#00416b",
+          cyan: "#0097bc",
+          "pale-cyan": "#E8F6F9",
+          "light-blue": "#DEE7EC",
+          dark: "#373737",
+          gray: "#898989",
+          "off-white": "#F2F2F2",
         },
+      },
+      fontFamily: {
+        sohne: ["Sohne", "Helvetica Neue", "Arial", "sans-serif"],
+      },
+      borderRadius: {
+        brand: "20px",
       },
       keyframes: {
         "slide-up": {

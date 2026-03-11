@@ -3,8 +3,8 @@ import type { DigestResult, Task } from "../types";
 const PRIORITY_COLORS: Record<string, string> = {
   P1: "#DC2626",
   P2: "#F97316",
-  P3: "#3B82F6",
-  P4: "#9CA3AF",
+  P3: "#0097bc",
+  P4: "#898989",
 };
 
 const PRIORITY_LABELS: Record<string, string> = {
@@ -69,7 +69,6 @@ export function renderSlackDigest(
       },
     });
 
-    // Add colored sidebar via attachment-style context
     blocks.push({ type: "divider" });
   }
 

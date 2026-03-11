@@ -3,8 +3,8 @@ import type { DigestResult, Task } from "../types";
 const PRIORITY_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   P1: { bg: "#DC2626", text: "#FFFFFF", label: "URGENT" },
   P2: { bg: "#F97316", text: "#FFFFFF", label: "IMPORTANT" },
-  P3: { bg: "#3B82F6", text: "#FFFFFF", label: "ROUTINE" },
-  P4: { bg: "#9CA3AF", text: "#FFFFFF", label: "LOW" },
+  P3: { bg: "#0097bc", text: "#FFFFFF", label: "ROUTINE" },
+  P4: { bg: "#898989", text: "#FFFFFF", label: "LOW" },
 };
 
 const PRIORITY_TITLES: Record<string, string> = {
@@ -26,13 +26,13 @@ function renderTask(task: Task): string {
 
   return `
     <tr>
-      <td style="padding:12px 16px;border-bottom:1px solid #E5E7EB;">
+      <td style="padding:12px 16px;border-bottom:1px solid #DEE7EC;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="background:${priority.bg};color:${priority.text};font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.5px;">${task.priority}</span>
-          <span style="font-size:15px;color:#111827;font-weight:500;">${task.title}</span>
+          <span style="font-size:15px;color:#373737;font-weight:500;">${task.title}</span>
           ${deadlineHtml}
         </div>
-        <div style="margin-top:4px;font-size:13px;color:#6B7280;">
+        <div style="margin-top:4px;font-size:13px;color:#898989;">
           ${sourceIcon(task.source)} ${task.senderName} &middot; <em>${task.reason}</em>
         </div>
       </td>
@@ -81,7 +81,7 @@ export function renderEmailDigest(
 
   const noTasks =
     digest.tasks.length === 0
-      ? `<p style="text-align:center;color:#6B7280;padding:32px;">No actionable tasks found. You're all clear!</p>`
+      ? `<p style="text-align:center;color:#898989;padding:32px;">No actionable tasks found. You're all clear!</p>`
       : "";
 
   return `<!DOCTYPE html>
@@ -91,15 +91,15 @@ export function renderEmailDigest(
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MeshSuture Daily Digest - ${date}</title>
 </head>
-<body style="margin:0;padding:0;background:#F3F4F6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F3F4F6;padding:24px 0;">
+<body style="margin:0;padding:0;background:#F2F2F2;font-family:'Sohne','Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F2F2F2;padding:24px 0;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#FFFFFF;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#FFFFFF;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
           <!-- Header -->
           <tr>
-            <td style="background:linear-gradient(135deg,#1E40AF,#7C3AED);padding:32px 24px;text-align:center;">
-              <h1 style="margin:0;color:#FFFFFF;font-size:24px;font-weight:700;">MeshSuture Daily Digest</h1>
+            <td style="background:linear-gradient(135deg,#00416b,#0097bc);padding:32px 24px;text-align:center;">
+              <h1 style="margin:0;color:#FFFFFF;font-size:22px;font-weight:600;font-family:'Sohne','Helvetica Neue',Arial,sans-serif;">MeshSuture<span style="color:#E8F6F9;">.</span> Daily Digest</h1>
               <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:14px;">${date}</p>
             </td>
           </tr>
@@ -107,9 +107,9 @@ export function renderEmailDigest(
           <!-- Daily Summary -->
           <tr>
             <td style="padding:24px;">
-              <div style="background:#EFF6FF;border-left:4px solid #3B82F6;padding:16px;border-radius:0 8px 8px 0;margin-bottom:24px;">
-                <p style="margin:0;font-size:14px;color:#1E40AF;font-weight:600;">Daily Overview</p>
-                <p style="margin:8px 0 0;font-size:14px;color:#374151;line-height:1.5;">${digest.dailySummary}</p>
+              <div style="background:#E8F6F9;border-left:4px solid #0097bc;padding:16px;border-radius:0 8px 8px 0;margin-bottom:24px;">
+                <p style="margin:0;font-size:14px;color:#00416b;font-weight:600;">Daily Overview</p>
+                <p style="margin:8px 0 0;font-size:14px;color:#373737;line-height:1.5;">${digest.dailySummary}</p>
               </div>
 
               <!-- Tasks -->
@@ -120,11 +120,11 @@ export function renderEmailDigest(
 
           <!-- Footer -->
           <tr>
-            <td style="padding:16px 24px;background:#F9FAFB;border-top:1px solid #E5E7EB;text-align:center;">
-              <p style="margin:0;font-size:12px;color:#9CA3AF;">
+            <td style="padding:16px 24px;background:#E8F6F9;border-top:1px solid #DEE7EC;text-align:center;">
+              <p style="margin:0;font-size:12px;color:#898989;">
                 Analyzed ${digest.emailsAnalyzed} email${digest.emailsAnalyzed !== 1 ? "s" : ""} and ${digest.slackMessagesAnalyzed} Slack message${digest.slackMessagesAnalyzed !== 1 ? "s" : ""}
               </p>
-              <p style="margin:4px 0 0;font-size:11px;color:#D1D5DB;">
+              <p style="margin:4px 0 0;font-size:11px;color:#898989;">
                 MeshSuture Daily Digest &middot; Powered by AI
               </p>
             </td>

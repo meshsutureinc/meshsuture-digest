@@ -86,7 +86,6 @@ export default function DashboardPage() {
     if (isLoaded) fetchData();
   }, [isLoaded, fetchData]);
 
-  // Check for OAuth callback params
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const connected = params.get("connected");
@@ -196,20 +195,26 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-msi-off-white">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-msi-cyan border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-msi-off-white">
       {/* Header */}
-      <header className="border-b bg-white shadow-sm">
+      <header className="border-b border-msi-light-blue bg-white shadow-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <h1 className="text-xl font-bold text-gray-900">
-            MeshSuture Daily Digest
-          </h1>
+          <div className="flex items-baseline gap-0.5">
+            <span className="text-xl font-semibold tracking-tight text-msi-navy">
+              MeshSuture
+            </span>
+            <span className="text-xl font-semibold text-msi-cyan">.</span>
+            <span className="ml-2 text-sm font-medium text-msi-gray">
+              Daily Digest
+            </span>
+          </div>
           <UserButton />
         </div>
       </header>
@@ -217,7 +222,7 @@ export default function DashboardPage() {
       <main className="mx-auto max-w-6xl px-6 py-8">
         {/* Connection Status */}
         <section className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-gray-800">
+          <h2 className="mb-4 text-lg font-semibold text-msi-navy">
             Connected Services
           </h2>
           <ConnectionCards
@@ -231,7 +236,7 @@ export default function DashboardPage() {
         {/* Preferences */}
         {preferences && (
           <section className="mb-8">
-            <h2 className="mb-4 text-lg font-semibold text-gray-800">
+            <h2 className="mb-4 text-lg font-semibold text-msi-navy">
               Settings
             </h2>
             <PreferencesPanel
@@ -243,13 +248,13 @@ export default function DashboardPage() {
 
         {/* Test Digest */}
         <section className="mb-8">
-          <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-msi-light-blue bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-800">
+                <h2 className="text-lg font-semibold text-msi-navy">
                   Test Digest
                 </h2>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-msi-gray">
                   Run the full pipeline now and preview your digest.
                 </p>
               </div>
@@ -260,7 +265,7 @@ export default function DashboardPage() {
                   (!connections?.microsoft.connected &&
                     !connections?.slack.connected)
                 }
-                className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-brand bg-msi-cyan px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-msi-navy focus:outline-none focus:ring-2 focus:ring-msi-cyan/40 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {testingDigest ? (
                   <span className="flex items-center gap-2">

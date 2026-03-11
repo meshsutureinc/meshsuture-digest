@@ -21,11 +21,11 @@ export function ConnectionCards({
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       {/* Microsoft 365 Card */}
-      <div className="rounded-xl border bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-msi-light-blue bg-white p-6 shadow-sm">
         <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-msi-pale-cyan">
             <svg
-              className="h-6 w-6 text-blue-600"
+              className="h-6 w-6 text-msi-navy"
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -33,21 +33,21 @@ export function ConnectionCards({
             </svg>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">Microsoft 365</h3>
-            <p className="text-xs text-gray-500">Outlook email access</p>
+            <h3 className="font-semibold text-msi-navy">Microsoft 365</h3>
+            <p className="text-xs text-msi-gray">Outlook email access</p>
           </div>
         </div>
         {connections?.microsoft.connected ? (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-green-500" />
-              <span className="text-sm font-medium text-green-700">
+              <span className="h-2.5 w-2.5 rounded-full bg-msi-cyan" />
+              <span className="text-sm font-medium text-msi-cyan">
                 Connected
               </span>
             </div>
             <button
               onClick={() => onDisconnect("microsoft")}
-              className="text-xs text-red-500 hover:text-red-700"
+              className="text-xs font-medium text-red-500 hover:text-red-700"
             >
               Disconnect
             </button>
@@ -55,7 +55,7 @@ export function ConnectionCards({
         ) : (
           <button
             onClick={onConnectMicrosoft}
-            className="w-full rounded-lg border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 transition hover:bg-blue-50"
+            className="w-full rounded-brand border-2 border-msi-cyan px-4 py-2 text-sm font-semibold text-msi-cyan transition hover:bg-msi-pale-cyan"
           >
             Connect Microsoft 365
           </button>
@@ -63,11 +63,11 @@ export function ConnectionCards({
       </div>
 
       {/* Slack Card */}
-      <div className="rounded-xl border bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-msi-light-blue bg-white p-6 shadow-sm">
         <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-msi-pale-cyan">
             <svg
-              className="h-6 w-6 text-purple-600"
+              className="h-6 w-6 text-msi-navy"
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -75,21 +75,21 @@ export function ConnectionCards({
             </svg>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">Slack</h3>
-            <p className="text-xs text-gray-500">Channel & DM access</p>
+            <h3 className="font-semibold text-msi-navy">Slack</h3>
+            <p className="text-xs text-msi-gray">Channel & DM access</p>
           </div>
         </div>
         {connections?.slack.connected ? (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-green-500" />
-              <span className="text-sm font-medium text-green-700">
+              <span className="h-2.5 w-2.5 rounded-full bg-msi-cyan" />
+              <span className="text-sm font-medium text-msi-cyan">
                 Connected{connections.slack.teamName ? ` to ${connections.slack.teamName}` : ""}
               </span>
             </div>
             <button
               onClick={() => onDisconnect("slack")}
-              className="text-xs text-red-500 hover:text-red-700"
+              className="text-xs font-medium text-red-500 hover:text-red-700"
             >
               Disconnect
             </button>
@@ -97,7 +97,7 @@ export function ConnectionCards({
         ) : (
           <button
             onClick={onConnectSlack}
-            className="w-full rounded-lg border border-purple-600 px-4 py-2 text-sm font-medium text-purple-600 transition hover:bg-purple-50"
+            className="w-full rounded-brand border-2 border-msi-cyan px-4 py-2 text-sm font-semibold text-msi-cyan transition hover:bg-msi-pale-cyan"
           >
             Connect Slack
           </button>

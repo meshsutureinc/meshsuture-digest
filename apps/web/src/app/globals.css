@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Sohne";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: local("Sohne"), local("Sohne-Buch");
+}
+
+@font-face {
+  font-family: "Sohne";
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: local("Sohne-Halbfett"), local("Sohne Halbfett");
+}
+
 body {
-  @apply bg-gray-50 text-gray-900 antialiased;
+  @apply bg-msi-off-white text-msi-dark antialiased font-sohne;
 }
