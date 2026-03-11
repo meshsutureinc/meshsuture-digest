@@ -39,7 +39,13 @@ export async function runDigestForUser(
   let emails: EmailMessage[] = [];
   let slackMessages: SlackMessage[] = [];
 
-  if (user.microsoftToken) {
+  const dataSrc = user.dataSourcePreference; // EMAILS_ONLY | SLACK_ONLY | BOTH
+  console.log("[Digest] Data source preference:", dataSrc);
+
+  if (
+    (dataSrc === "EMAILS_ONLY" || dataSrc === "BOTH") &&
+    user.microsoftToken
+  ) {
     let accessToken: string;
 
     if (user.microsoftToken.expiresAt < new Date()) {
@@ -69,7 +75,11 @@ export async function runDigestForUser(
     emails = await fetchEmails(accessToken, timeRange);
   }
 
-  if (user.slackToken && user.slackToken.slackUserId) {
+  if (
+    (dataSrc === "SLACK_ONLY" || dataSrc === "BOTH") &&
+    user.slackToken &&
+    user.slackToken.slackUserId
+  ) {
     slackMessages = await fetchSlackMessages(
       user.slackToken.encryptedBotToken,
       user.slackToken.slackUserId,

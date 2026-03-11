@@ -28,5 +28,6 @@ export type {
 // Enum types + runtime values
 export {
   NotificationPreference,
+  DataSourcePreference,
   SummaryWindowPreset,
 } from ".prisma/client";

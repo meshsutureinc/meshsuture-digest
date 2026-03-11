@@ -15,6 +15,7 @@ interface ConnectionStatus {
 
 interface Preferences {
   notificationPreference: "EMAIL_ONLY" | "SLACK_ONLY" | "BOTH";
+  dataSourcePreference: "EMAILS_ONLY" | "SLACK_ONLY" | "BOTH";
   summaryWindowPreset:
     | "LAST_24_HOURS"
     | "LAST_12_HOURS"

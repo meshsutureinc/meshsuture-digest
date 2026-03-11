@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 type NotificationPref = "EMAIL_ONLY" | "SLACK_ONLY" | "BOTH";
+type DataSourcePref = "EMAILS_ONLY" | "SLACK_ONLY" | "BOTH";
 type SummaryPreset =
   | "LAST_24_HOURS"
   | "LAST_12_HOURS"
@@ -12,6 +13,7 @@ type SummaryPreset =
 
 interface Preferences {
   notificationPreference: NotificationPref;
+  dataSourcePreference: DataSourcePref;
   summaryWindowPreset: SummaryPreset;
   summaryStartTime: string | null;
   summaryEndTime: string | null;
@@ -30,6 +32,12 @@ const NOTIFICATION_OPTIONS: { value: NotificationPref; label: string }[] = [
   { value: "BOTH", label: "Both" },
 ];
 
+const DATA_SOURCE_OPTIONS: { value: DataSourcePref; label: string; description: string }[] = [
+  { value: "EMAILS_ONLY", label: "Emails only", description: "Summarize Outlook emails" },
+  { value: "SLACK_ONLY", label: "Slack only", description: "Summarize Slack messages" },
+  { value: "BOTH", label: "Both", description: "Summarize emails and Slack" },
+];
+
 const SUMMARY_PRESETS: { value: SummaryPreset; label: string }[] = [
   { value: "LAST_24_HOURS", label: "Last 24 hours" },
   { value: "LAST_12_HOURS", label: "Last 12 hours" },
@@ -41,6 +49,9 @@ const SUMMARY_PRESETS: { value: SummaryPreset; label: string }[] = [
 export function PreferencesPanel({ preferences, onSave }: Props) {
   const [notifPref, setNotifPref] = useState(
     preferences.notificationPreference
+  );
+  const [dataSourcePref, setDataSourcePref] = useState(
+    preferences.dataSourcePreference
   );
   const [summaryPreset, setSummaryPreset] = useState(
     preferences.summaryWindowPreset
@@ -59,10 +70,19 @@ export function PreferencesPanel({ preferences, onSave }: Props) {
     return false;
   };
 
+  const isDataSourceDisabled = (opt: DataSourcePref): boolean => {
+    if (opt === "EMAILS_ONLY" && !preferences.hasMicrosoft) return true;
+    if (opt === "SLACK_ONLY" && !preferences.hasSlack) return true;
+    if (opt === "BOTH" && (!preferences.hasMicrosoft || !preferences.hasSlack))
+      return true;
+    return false;
+  };
+
   const handleSave = async () => {
     setSaving(true);
     const updates: any = {
       notificationPreference: notifPref,
+      dataSourcePreference: dataSourcePref,
       summaryWindowPreset: summaryPreset,
     };
     if (summaryPreset === "CUSTOM") {
@@ -75,10 +95,67 @@ export function PreferencesPanel({ preferences, onSave }: Props) {
 
   return (
     <div className="space-y-6 rounded-2xl border border-msi-light-blue bg-white p-6 shadow-sm">
+      {/* Data Source Preference */}
+      <div>
+        <label className="mb-2 block text-sm font-semibold text-msi-navy">
+          Data to summarize
+        </label>
+        <div className="flex gap-3">
+          {DATA_SOURCE_OPTIONS.map((opt) => {
+            const disabled = isDataSourceDisabled(opt.value);
+            return (
+              <button
+                key={opt.value}
+                onClick={() => !disabled && setDataSourcePref(opt.value)}
+                disabled={disabled}
+                className={`flex-1 rounded-brand border-2 px-4 py-3 text-left transition ${
+                  dataSourcePref === opt.value
+                    ? "border-msi-cyan bg-msi-pale-cyan"
+                    : disabled
+                      ? "cursor-not-allowed border-msi-light-blue bg-msi-off-white"
+                      : "border-msi-light-blue hover:border-msi-cyan"
+                }`}
+              >
+                <span
+                  className={`block text-sm font-medium ${
+                    dataSourcePref === opt.value
+                      ? "text-msi-navy"
+                      : disabled
+                        ? "text-msi-gray/50"
+                        : "text-msi-dark"
+                  }`}
+                >
+                  {opt.label}
+                </span>
+                <span
+                  className={`mt-0.5 block text-xs ${
+                    dataSourcePref === opt.value
+                      ? "text-msi-cyan"
+                      : "text-msi-gray"
+                  }`}
+                >
+                  {opt.description}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        {!preferences.hasMicrosoft && (
+          <p className="mt-1 text-xs text-msi-gray">
+            Connect Microsoft 365 to include emails.
+          </p>
+        )}
+        {!preferences.hasSlack && (
+          <p className="mt-1 text-xs text-msi-gray">
+            Connect Slack to include Slack messages.
+          </p>
+        )}
+      </div>
+
       {/* Notification Preference */}
       <div>
         <label className="mb-2 block text-sm font-semibold text-msi-navy">
-          Notification delivery
+          Deliver digest via
         </label>
         <div className="flex gap-3">
           {NOTIFICATION_OPTIONS.map((opt) => {
@@ -101,16 +178,6 @@ export function PreferencesPanel({ preferences, onSave }: Props) {
             );
           })}
         </div>
-        {!preferences.hasMicrosoft && (
-          <p className="mt-1 text-xs text-msi-gray">
-            Connect Microsoft 365 to enable email delivery.
-          </p>
-        )}
-        {!preferences.hasSlack && (
-          <p className="mt-1 text-xs text-msi-gray">
-            Connect Slack to enable Slack delivery.
-          </p>
-        )}
       </div>
 
       {/* Summary Window */}

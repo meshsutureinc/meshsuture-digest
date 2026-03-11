@@ -13,6 +13,12 @@ enum NotificationPreference {
   BOTH
 }
 
+enum DataSourcePreference {
+  EMAILS_ONLY
+  SLACK_ONLY
+  BOTH
+}
+
 enum SummaryWindowPreset {
   LAST_24_HOURS
   LAST_12_HOURS
@@ -30,6 +36,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   notificationPreference NotificationPreference @default(BOTH)
+  dataSourcePreference   DataSourcePreference   @default(BOTH)
 
   summaryWindowPreset SummaryWindowPreset @default(LAST_24_HOURS)
   summaryStartTime    String?

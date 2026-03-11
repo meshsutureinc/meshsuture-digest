@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   prisma,
   type NotificationPreference,
+  type DataSourcePreference,
   type SummaryWindowPreset,
 } from "@meshsuture/db";
 import { authenticateRequest } from "@/lib/auth";
@@ -24,6 +25,7 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     notificationPreference: user.notificationPreference,
+    dataSourcePreference: user.dataSourcePreference,
     summaryWindowPreset: user.summaryWindowPreset,
     summaryStartTime: user.summaryStartTime,
     summaryEndTime: user.summaryEndTime,
@@ -38,6 +40,7 @@ export async function PUT(request: NextRequest) {
 
   const body = (await request.json()) as {
     notificationPreference?: NotificationPreference;
+    dataSourcePreference?: DataSourcePreference;
     summaryWindowPreset?: SummaryWindowPreset;
     summaryStartTime?: string;
     summaryEndTime?: string;
@@ -117,6 +120,9 @@ export async function PUT(request: NextRequest) {
   if (body.notificationPreference) {
     updateData.notificationPreference = body.notificationPreference;
   }
+  if (body.dataSourcePreference) {
+    updateData.dataSourcePreference = body.dataSourcePreference;
+  }
   if (body.summaryWindowPreset) {
     updateData.summaryWindowPreset = body.summaryWindowPreset;
   }
@@ -134,6 +140,7 @@ export async function PUT(request: NextRequest) {
 
   return NextResponse.json({
     notificationPreference: updated.notificationPreference,
+    dataSourcePreference: updated.dataSourcePreference,
     summaryWindowPreset: updated.summaryWindowPreset,
     summaryStartTime: updated.summaryStartTime,
     summaryEndTime: updated.summaryEndTime,
