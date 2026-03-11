@@ -1,26 +1,18 @@
 "use client";
 
-import { SignUp, useAuth } from "@clerk/nextjs";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
-  const { isSignedIn, isLoaded } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      window.location.href = "/dashboard";
-    }
-  }, [isLoaded, isSignedIn]);
+    router.replace("/sign-in");
+  }, [router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900">
-      <SignUp
-        appearance={{
-          elements: {
-            rootBox: "mx-auto",
-          },
-        }}
-      />
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-msi-pale-cyan to-white">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-msi-navy border-t-transparent" />
     </div>
   );
 }
