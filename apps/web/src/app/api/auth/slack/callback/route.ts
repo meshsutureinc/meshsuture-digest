@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@meshsuture/db";
-import { encrypt, lookupSlackUserId } from "@meshsuture/core";
+import { encrypt } from "@meshsuture/core";
 import { config } from "@meshsuture/config";
 
 export async function GET(request: NextRequest) {
@@ -82,17 +82,9 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  let slackUserId: string | null = null;
-  try {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    console.log("[Slack OAuth] Found user:", user?.email);
-    if (user?.email) {
-      slackUserId = await lookupSlackUserId(encryptedBotToken, user.email);
-      console.log("[Slack OAuth] Resolved Slack user ID:", slackUserId);
-    }
-  } catch (err) {
-    console.error("[Slack OAuth] Slack user lookup failed (non-fatal):", err);
-  }
+  // Get the Slack user ID directly from the OAuth response
+  const slackUserId: string | null = tokenData.authed_user?.id || null;
+  console.log("[Slack OAuth] Slack user ID from OAuth response:", slackUserId);
 
   try {
     console.log("[Slack OAuth] Upserting token to database...");

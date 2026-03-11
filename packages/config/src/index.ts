@@ -24,7 +24,6 @@ export const config = {
       "mpim:history",
       "mpim:read",
       "users:read",
-      "users:read.email",
       "chat:write",
     ],
     redirectUri: `${appUrl}/api/auth/slack/callback`,
