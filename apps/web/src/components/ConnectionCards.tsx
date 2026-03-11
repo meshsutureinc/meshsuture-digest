@@ -9,12 +9,14 @@ interface Props {
   connections: ConnectionStatus | null;
   onConnectMicrosoft: () => void;
   onConnectSlack: () => void;
+  onDisconnect: (provider: "microsoft" | "slack") => void;
 }
 
 export function ConnectionCards({
   connections,
   onConnectMicrosoft,
   onConnectSlack,
+  onDisconnect,
 }: Props) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
@@ -36,11 +38,19 @@ export function ConnectionCards({
           </div>
         </div>
         {connections?.microsoft.connected ? (
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-green-500" />
-            <span className="text-sm font-medium text-green-700">
-              Connected
-            </span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-green-500" />
+              <span className="text-sm font-medium text-green-700">
+                Connected
+              </span>
+            </div>
+            <button
+              onClick={() => onDisconnect("microsoft")}
+              className="text-xs text-red-500 hover:text-red-700"
+            >
+              Disconnect
+            </button>
           </div>
         ) : (
           <button
@@ -70,11 +80,19 @@ export function ConnectionCards({
           </div>
         </div>
         {connections?.slack.connected ? (
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-green-500" />
-            <span className="text-sm font-medium text-green-700">
-              Connected{connections.slack.teamName ? ` to ${connections.slack.teamName}` : ""}
-            </span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-green-500" />
+              <span className="text-sm font-medium text-green-700">
+                Connected{connections.slack.teamName ? ` to ${connections.slack.teamName}` : ""}
+              </span>
+            </div>
+            <button
+              onClick={() => onDisconnect("slack")}
+              className="text-xs text-red-500 hover:text-red-700"
+            >
+              Disconnect
+            </button>
           </div>
         ) : (
           <button

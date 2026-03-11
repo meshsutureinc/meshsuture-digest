@@ -170,6 +170,30 @@ export default function DashboardPage() {
     window.location.href = `/api/auth/slack?token=${token}`;
   };
 
+  const handleDisconnect = async (provider: "microsoft" | "slack") => {
+    const token = await getToken();
+    if (!token) return;
+
+    try {
+      const res = await apiClient("/api/auth/disconnect", token, {
+        method: "POST",
+        body: JSON.stringify({ provider }),
+      });
+
+      if (res.ok) {
+        showToast(
+          `${provider === "microsoft" ? "Microsoft 365" : "Slack"} disconnected`,
+          "success"
+        );
+        fetchData();
+      } else {
+        showToast("Failed to disconnect", "error");
+      }
+    } catch {
+      showToast("Failed to disconnect", "error");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -200,6 +224,7 @@ export default function DashboardPage() {
             connections={connections}
             onConnectMicrosoft={handleConnectMicrosoft}
             onConnectSlack={handleConnectSlack}
+            onDisconnect={handleDisconnect}
           />
         </section>
 
