@@ -91,9 +91,12 @@ export async function lookupSlackUserId(
 ): Promise<string | null> {
   const client = getSlackClient(encryptedBotToken);
   try {
+    console.log("[Slack] Looking up user by email:", email);
     const result = await client.users.lookupByEmail({ email });
+    console.log("[Slack] lookupByEmail result:", result.user?.id, result.user?.name);
     return result.user?.id || null;
-  } catch {
+  } catch (err: any) {
+    console.error("[Slack] lookupByEmail failed:", err?.data?.error || err?.message || err);
     return null;
   }
 }

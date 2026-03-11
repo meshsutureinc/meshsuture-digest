@@ -7,6 +7,7 @@ import {
   refreshAccessToken,
   fetchSlackMessages,
   sendSlackDM,
+  lookupSlackUserId,
   runAIPipeline,
   renderEmailDigest,
   renderSlackDigest,
@@ -125,17 +126,41 @@ export async function runDigestForUser(
 
   if (
     (pref === "SLACK_ONLY" || pref === "BOTH") &&
-    user.slackToken?.slackUserId
+    user.slackToken
   ) {
     try {
-      const { blocks, text } = renderSlackDigest(digestResult, dateStr);
-      await sendSlackDM(
-        user.slackToken.encryptedBotToken,
-        user.slackToken.slackUserId,
-        blocks,
-        text
-      );
-      sentViaSlack = true;
+      let targetSlackUserId = user.slackToken.slackUserId;
+
+      // If slackUserId is missing, try to look it up now
+      if (!targetSlackUserId) {
+        console.log("[Digest] slackUserId missing, attempting lookup for:", user.email);
+        targetSlackUserId = await lookupSlackUserId(
+          user.slackToken.encryptedBotToken,
+          user.email
+        );
+
+        // Persist it so we don't have to look it up every time
+        if (targetSlackUserId) {
+          console.log("[Digest] Found slackUserId:", targetSlackUserId, "— saving to DB");
+          await prisma.slackToken.update({
+            where: { userId },
+            data: { slackUserId: targetSlackUserId },
+          });
+        } else {
+          console.error("[Digest] Could not resolve slackUserId for:", user.email);
+        }
+      }
+
+      if (targetSlackUserId) {
+        const { blocks, text } = renderSlackDigest(digestResult, dateStr);
+        await sendSlackDM(
+          user.slackToken.encryptedBotToken,
+          targetSlackUserId,
+          blocks,
+          text
+        );
+        sentViaSlack = true;
+      }
     } catch (err) {
       console.error("Failed to send Slack digest:", err);
     }
