@@ -90,6 +90,10 @@ export async function runDigestForUser(
   let sentViaSlack = false;
 
   const pref = user.notificationPreference;
+  console.log("[Digest] Notification preference:", pref);
+  console.log("[Digest] Has Microsoft token:", !!user.microsoftToken);
+  console.log("[Digest] Has Slack token:", !!user.slackToken);
+  console.log("[Digest] Slack user ID:", user.slackToken?.slackUserId);
 
   if (
     (pref === "EMAIL_ONLY" || pref === "BOTH") &&

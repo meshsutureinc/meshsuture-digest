@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
     slack: {
       connected: !!slackToken,
       teamName: slackToken?.teamName || null,
+      hasSlackUserId: !!slackToken?.slackUserId,
     },
   });
 }
